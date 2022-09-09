@@ -6,9 +6,11 @@ import glob
 import os
 
 
-def run_commit(subset_path):
+## input tck_path is the working dirctoty of subset file
+
+def run_commit(tck_path):
     ## Generate a dictionary
-    subset = glob.glob(os.path.join(subset_path, "*.tck"), recursive=True)
+    subset = glob.glob(os.path.join(tck_path, "*.tck"), recursive=True)
     trk2dictionary.run(
         filename_tractogram = subset[0],
         filename_peaks = '/Users/xinyi/Documents/GitHub/rCOMMIT/599671/peaks.nii.gz',
@@ -22,7 +24,7 @@ def run_commit(subset_path):
 
     mit = commit.Evaluation('.','.')
 
-    scheme = glob.glob(os.path.join(subset_path, "*.scheme"), recursive=True)
+    scheme = glob.glob(os.path.join(tck_path, "*.scheme"), recursive=True)
     scheme = scheme[0]
     mit.load_data('/Users/xinyi/Documents/GitHub/rCOMMIT/599671/data.nii.gz',scheme)
 
@@ -35,7 +37,7 @@ def run_commit(subset_path):
     mit.load_kernels()
 
 
-    mit.load_dictionary(os.path.join(subset_path,'COMMIT'))
+    mit.load_dictionary(os.path.join(tck_path,'COMMIT'))
     mit.set_threads()
     mit.build_operator()
     mit.fit(tol_fun = 1e-3, max_iter=1000)
