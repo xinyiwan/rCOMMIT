@@ -8,23 +8,20 @@ import io
 
 def generate_subsets(raw_file_path, subset_sizes):
     
-    global sub_file_path
-
+    vote = 5
     if os.path.exists(raw_file_path):
         rawfile = glob.glob(os.path.join(raw_file_path, "*.tck"), recursive=True)
     if rawfile[0]:
         rawfile = rawfile[0]
 
     raw = nib.streamlines.load(rawfile)
-    paths = []
-    for i in range(len(subset_sizes)):
+    for i in len(subset_sizes):
 
         ## Make files for each subset
-        sub_file_path = os.path.join(raw_file_path,"sub_%s" %subset_sizes[i])
-        if not os.path.exists(sub_file_path):
+        if not os.path.exists(os.path.join(raw_file_path,"sub_%s" %subset_sizes[i])):
+            sub_file_path = os.path.join(raw_file_path,"sub_%s" %subset_sizes[i])
+
             os.makedirs(sub_file_path)
-        paths.append(sub_file_path)
-        
         ## Generate random index for subset
         num_streamlines = subset_sizes[i]
         idx_list = np.random.choice(
@@ -45,13 +42,12 @@ def generate_subsets(raw_file_path, subset_sizes):
         )
         nib.streamlines.save(
             t_new,
-            os.path.join(sub_file_path,"new_%s.tck" %num_streamlines),
+            "new_%s.tck" %num_streamlines,
             header=raw.header
         )
 
-    print("All the paths of subsets are in %s" %paths)
-    with open(os.path.join(raw_file_path,"paths.txt"), "w") as output:
-        for i in paths:
-            output.write(str(i) + '\n')
-    return 
+        return sub_file_path
 
+
+def calculate_runtime(raw_size, subset_size, votes):
+    return raw_size * votes / subset_size
