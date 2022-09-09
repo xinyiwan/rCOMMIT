@@ -38,7 +38,7 @@ raw data -> size
 
 10mio  5   （5h)
 
-5mio 10
+5mio 10 
 
 500k 100  
 
@@ -46,4 +46,7 @@ raw data -> size
 
 ---
 
-Raw data --> give sizes of
+Raw data --> give sizes of 
+
+
+romove bigger files: tck, npy, dict

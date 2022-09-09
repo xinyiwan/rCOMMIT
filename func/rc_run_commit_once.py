@@ -4,29 +4,45 @@ import amico
 from commit import trk2dictionary
 import glob
 import os
+import shutil
+
 
 
 ## input tck_path is the working dirctoty of subset file
 
-def run_commit(tck_path):
+
+
+def run_commit_on_subsets(raw_file_path, tck_path, runtime):
+
+    ## Generate dwi scheme for use
+    scheme = os.path.join(raw_file_path, "DWI.scheme")
+    bvals = os.path.join(raw_file_path, "bvals.txt")
+    bvecs = os.path.join(raw_file_path, "bvecs.txt")
+
+    if not os.path.exists(scheme):
+        amico.util.fsl2scheme(bvals,bvecs,scheme)
+
+
     ## Generate a dictionary
     subset = glob.glob(os.path.join(tck_path, "*.tck"), recursive=True)
+    peaks = glob.glob(os.path.join(raw_file_path, "peaks.nii.gz"), recursive=True)
+    dwi_data = glob.glob(os.path.join(raw_file_path, "data.nii.gz"), recursive=True)
+    scheme = glob.glob(os.path.join(raw_file_path, "*.scheme"), recursive=True)
+
+
+
     trk2dictionary.run(
         filename_tractogram = subset[0],
-        filename_peaks = '/Users/xinyi/Documents/GitHub/rCOMMIT/599671/peaks.nii.gz',
+        filename_peaks = peaks[0],
         # filename_mask = 'WM.nii.gz',
         fiber_shift = 0.5,
         peaks_use_affine = True  
     ) 
 
-    ## Generate dwi scheme for use
-    # amico.util.fsl2scheme('/Users/xini/Documents/GitHub/rCOMMIT/599671/bvals.txt','/Users/xinyi/Documents/GitHub/rCOMMIT/599671/bvecs.txt','DWI.scheme')
-
     mit = commit.Evaluation('.','.')
 
-    scheme = glob.glob(os.path.join(tck_path, "*.scheme"), recursive=True)
-    scheme = scheme[0]
-    mit.load_data('/Users/xinyi/Documents/GitHub/rCOMMIT/599671/data.nii.gz',scheme)
+
+    mit.load_data(dwi_data[0],scheme[0])
 
     mit.set_model('StickZeppelinBall')
     d_par = 1.7E-3
@@ -36,12 +52,10 @@ def run_commit(tck_path):
     mit.generate_kernels(regenerate=True )
     mit.load_kernels()
 
-
     mit.load_dictionary(os.path.join(tck_path,'COMMIT'))
     mit.set_threads()
     mit.build_operator()
     mit.fit(tol_fun = 1e-3, max_iter=1000)
     mit.save_results()
     x_ic, x_ec, x_iso = mit.get_coeffs()
-    print(x_ic.size,x_ic.max,x_ic.min)
 
