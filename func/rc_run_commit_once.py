@@ -6,11 +6,7 @@ import glob
 import os
 import shutil
 
-
-
 ## input tck_path is the working dirctoty of subset file
-
-
 
 def run_commit_on_subsets(raw_file_path, tck_path, runtime):
 

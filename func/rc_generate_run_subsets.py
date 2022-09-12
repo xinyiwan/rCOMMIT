@@ -11,7 +11,7 @@ from func.rc_get_key_results_from_commit import get_key_results_from_commit
 
 def generate_run_subsets(raw_file_path, subset_sizes, raw_size):
     
-    global sub_file_path
+    # global sub_file_path
     vote = 5
     if os.path.exists(raw_file_path):
         rawfile = glob.glob(os.path.join(raw_file_path, "*.tck"), recursive=True)
@@ -28,7 +28,7 @@ def generate_run_subsets(raw_file_path, subset_sizes, raw_size):
         paths.append(sub_file_path)
         num_streamlines = subset_sizes[i]
 
-        ## Define repeation times
+        ## Define repetition times
         rep = int(raw_size*vote/subset_sizes[i])
         for j in range(rep):
             ## Generate random index for subset
@@ -40,7 +40,7 @@ def generate_run_subsets(raw_file_path, subset_sizes, raw_size):
 
             ## save it to the subsets path
             subsets_info = {"size": [subset_sizes[i]],"runtime":[j], "idx": idx_list}
-            with io.open(os.path.join(sub_file_path, 'idx_%s.json'%j), 'w') as f:
+            with io.open(os.path.join(sub_file_path, 'idx_%s.json'%j), 'w') as f:   ## better naming method to fix
                 json.dump(subsets_info, f)
 
             ## Generate subsets
